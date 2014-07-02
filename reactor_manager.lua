@@ -21,32 +21,37 @@ function setHeadings()
 	end
 end
 
+function round(number, places)
+	local exp = 10 ^ places
+	return (math.floor(number*exp)+0.5) / exp
+end
+
 function updateValues()
 	--get the values and round them to 1 decimal.  The rounding is not working!
 	energyCell_temp = cell.getEnergyStored(dirCell)
-	energyCell = tonumber( string.format("%.1f", energyCell_temp/1000000, 10) ) --mRF
+	energyCell = round(energyCell_temp/1000000, 1) --mRF
 	levelCell_temp = (energyCell_temp/cellMaxEnergy)*100
-	levelCell = tonumber( string.format("%.1f", levelCell_temp), 10 )
+	levelCell = round(levelCell_temp, 1)
 	
 	energyReactor_temp = reactor.getEnergyStored()
-	energyReactor = tonumber( string.format("%.1f", energyReactor_temp/1000000, 10) ) --mRF
+	energyReactor = round(energyReactor_temp/1000000, 1) --mRF
 	levelReactor_temp = (energyReactor_temp/10000000)*100 --divided by the reactor capacity
-	levelReactor = tonumber(string.format("%.1f", levelReactor_temp), 10)
+	levelReactor = round(levelReactor_temp, 1)
 	
-	power = tonumber( string.format("%.1f", reactor.getEnergyProducedLastTick()/1000), 10 ) --kRF/t
+	power = round(reactor.getEnergyProducedLastTick()/1000, 1) --kRF/t
 	
 	fuel_temp = reactor.getFuelAmount()  --mB
-	fuel = tonumber( string.format("%.1f", valFuel_temp), 10 )
-	fuelPercent =  tonumber( string.format("%.1f", (valFuel_temp/reactor.getFuelAmountMax())*100), 10 )
+	fuel = round(valFuel_temp, 1)
+	fuelPercent =  round((valFuel_temp/reactor.getFuelAmountMax())*100, 1)
 end
 
-function drawMonitorLine(a, b, c) --a = line number on monitor (num), b = label (string), c = what needs to be written (string)
-	monitor.setCursorPos(1,a)
+function drawMonitorLine(line, label, inscription) --a = line number on monitor (num), b = label (string), c = what needs to be written (string)
+	monitor.setCursorPos(1,line)
 	monitor.clearLine()
 	monitor.setTextColor(colors.yellow)
-	monitor.write(b)
+	monitor.write(label)
 	monitor.setTextColor(colors.white)
-	monitor.write(c)
+	monitor.write(inscription)
 end
 
 function updateMonitor()
@@ -65,11 +70,11 @@ while true do
 	updateMonitor()
 	
 	if levelCell <= 10 then
-		reactor.setActive = True
+		reactor.setActive(True)
 		setHeadings()
 	else
 		if levelReactor >= 90 then
-			reactor.setActive = False
+			reactor.setActive(False)
 			setHeadings()
 		end
 	end
@@ -77,5 +82,5 @@ while true do
 	-- just an arbitrary sleep time
 	-- I don't know if having no sleep time will affect performance in-game, so I set it just in case
 	-- Should it be changed?
-	sleep(2)
+	sleep(5)
 end
