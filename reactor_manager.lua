@@ -23,7 +23,7 @@ end
 
 function round(number, places)
 	local exp = 10 ^ places
-	return (math.floor(number*exp)+0.5) / exp
+	return math.floor(number*exp+0.5) / exp
 end
 
 function updateValues()
