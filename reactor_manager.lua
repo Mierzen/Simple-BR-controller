@@ -40,7 +40,7 @@ function updateValues()
 	power = round(reactor.getEnergyProducedLastTick()/1000, 1) --kRF/t
 	
 	fuel_temp = reactor.getFuelAmount()  --mB
-	fuel = round(valFuel_temp, 1)
+	fuel = round(fuel_temp, 1)
 	fuelPercent =  round((fuel_temp/reactor.getFuelAmountMax())*100, 1)
 end
 
