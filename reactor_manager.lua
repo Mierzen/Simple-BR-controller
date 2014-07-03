@@ -68,18 +68,25 @@ setHeadings()
 while true do
 	updateMonitor()
 	
+	local reactor = peripheral.wrap('BigReactors-Reactor_0')
+	
 	if levelCell <= 10 then
-		reactor.setActive(True)
+		reactor.setActive(true)
 		setHeadings()
 	else
 		if levelReactor >= 90 then
-			reactor.setActive(False)
+			reactor.setActive(false)
 			setHeadings()
 		end
 	end
 	
-	-- just an arbitrary sleep time
-	-- I don't know if having no sleep time will affect performance in-game, so I set it just in case
-	-- Should it be changed?
-	sleep(5)
+	local sleepTime = 5
+	monitor.setTextColor(colors.gray)
+	for i=1,sleepTime do
+		monitor.setCursorPos(i,10)
+		monitor.write(".")
+		sleep(1)
+	end
+	monitor.clearLine()
+	monitor.setTextColor(colors.white)
 end
