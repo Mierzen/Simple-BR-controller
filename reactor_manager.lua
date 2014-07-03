@@ -27,7 +27,6 @@ function round(number, places)
 end
 
 function updateValues()
-	--get the values and round them to 1 decimal.  The rounding is not working!
 	energyCell_temp = cell.getEnergyStored(dirCell)
 	energyCell = round(energyCell_temp/1000000, 1) --mRF
 	levelCell_temp = (energyCell_temp/cellMaxEnergy)*100
@@ -42,7 +41,7 @@ function updateValues()
 	
 	fuel_temp = reactor.getFuelAmount()  --mB
 	fuel = round(valFuel_temp, 1)
-	fuelPercent =  round((valFuel_temp/reactor.getFuelAmountMax())*100, 1)
+	fuelPercent =  round((fuel_temp/reactor.getFuelAmountMax())*100, 1)
 end
 
 function drawMonitorLine(line, label, inscription) --a = line number on monitor (num), b = label (string), c = what needs to be written (string)
