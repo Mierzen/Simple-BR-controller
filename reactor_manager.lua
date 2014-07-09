@@ -1,10 +1,11 @@
 local dirCell = "left" -- direction of the energy cell
 local dirMonitor = "top" -- direction of the advanced monitor
+local dirModem = "bottom"
 local reactor = peripheral.wrap('BigReactors-Reactor_0')
-
 local cell = peripheral.wrap(dirCell)
 local cellMaxEnergy = cell.getMaxEnergyStored(dirCell)
 local monitor = peripheral.wrap(dirMonitor)
+local modem = peripheral.wrap(dirModem)
 
 function setHeadings()
 	-- requires a 3x2 colour monitor
@@ -26,6 +27,7 @@ function round(number, places)
 	return math.floor(number*exp+0.5) / exp
 end
 
+stats={}
 function updateValues()
 	energyCell_temp = cell.getEnergyStored(dirCell)
 	energyCell = round(energyCell_temp/1000000, 1) --mRF
@@ -37,11 +39,20 @@ function updateValues()
 	levelReactor_temp = (energyReactor_temp/10000000)*100 --divided by the reactor capacity
 	levelReactor = round(levelReactor_temp, 1)
 	
-	power = round(reactor.getEnergyProducedLastTick()/1000, 1) --kRF/t
+	power = round(reactor.getEnergyProducedLastTick()/1000, 2) --kRF/t
 	
 	fuel_temp = reactor.getFuelAmount()  --mB
 	fuel = round(fuel_temp, 1)
 	fuelPercent =  round((fuel_temp/reactor.getFuelAmountMax())*100, 1)
+	
+stats.isActive = isActive
+stats.energyCell = energyCell
+stats.levelCell = levelCell
+stats.energyReactor = energyReactor
+stats.levelReactor = levelReactor
+stats.power = power
+stats.fuel = fuel
+stats.fuelPercent = fuelPercent
 end
 
 function drawMonitorLine(line, label, inscription) --a = line number on monitor (num), b = label (string), c = what needs to be written (string)
@@ -63,12 +74,20 @@ function updateMonitor()
 end
 
 ------------------
-setHeadings()
 
+
+rednet.open(dirModem)
+
+
+
+setHeadings()
 while true do
 	updateMonitor()
+	rednet.broadcast(stats)
+
+	print("stats sent")
 	
-	local reactor = peripheral.wrap('BigReactors-Reactor_0')
+	-- local reactor = peripheral.wrap('BigReactors-Reactor_0')
 	
 	if levelCell <= 10 then
 		reactor.setActive(true)
